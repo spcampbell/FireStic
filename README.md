@@ -1,6 +1,6 @@
 ### **FireStic**
 
-#### A python script that accepts FireEye alerts as json over http and indexes (puts) the data into Elasticsearch...and provides some alerting too.
+#### A python script that accepts FireEye alerts as json over http and indexes (puts) the data into Elasticsearch...and notifies you too.
 
 >   **NOTE:** This script is still being developed and may contain numerous
 >   bugs, flaws and discrepencies. It may cause various types of damage and will
