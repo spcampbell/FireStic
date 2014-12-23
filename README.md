@@ -154,7 +154,7 @@ Download the free GeoLite City and GeoLite ASN databases (the binary versions) f
 
 Place the files in the geoip folder.
 
-The script accomodates different database files for internal vs. external devices. However, you will need to create a geoip database for your internal addresses and locations. Here is the best instruction I have found on how to do that: [Generate Local MaxMind Database](https://blog.vladionescu.com/geo-location-for-internal-networks/). It uses [mmutils](https://github.com/mteodoro/mmutils). The article describes adding your internal network locations and private ip addresses to the MaxMind CSV files. However, you will want to make your own CSV files and compile them to .dat for the best result.
+The script accomodates different database files for internal vs. external devices. However, you will need to create a geoip database for your internal addresses and locations. Here is the best instruction I have found on how to do that: [Generate Local MaxMind Database](https://blog.vladionescu.com/geo-location-for-internal-networks/). It uses [mmutils](https://github.com/mteodoro/mmutils). The article describes adding your internal network locations and private ip addresses to the MaxMind CSV files. However, you will want to make your own CSV files with only internal networks and locations then compile them to a new .dat for the best result. The process is basically the same and fairly straightforward once you see how the two .csv files are organizing the data.
 
 >   **TIP:** Do not open the csv files you create in Microsoft Excel as it will
 >   completely wreck it out and will never compile. Use Open Office or a text
@@ -208,7 +208,7 @@ See if it is running and accessible from another machine by going to the followi
 
 for example: `http://192.168.1.2:8888/ping`
 
-Note that all exceptions are being logged to file. You'll want to be able to see the exception if it gets thrown to stdout so running it from the console is preferred. Please report anything you run across.
+Note that all posible exceptions are not being logged to file. You'll want to be able to see any exceptions that get thrown to stdout so running it from the console is preferred. Please report any issues you run across.
 
 I will daemonize the script later. For now, this will have to do.
 
