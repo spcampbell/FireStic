@@ -10,48 +10,10 @@ import json
 from datetime import datetime
 import pytz  		# pip install pytz
 
-
-def sendAlert(theJson):
-    # ------------------------------------------------------------------------
-    # ------------------------------------------------------------------------
-    # --------- Configure these...
-
-    # email server FQDN or ip address
-    smtpServer = "your.relay.server.org"
-    smtpPort = 25
-
-    # From address
-    fromEmail = "FireStic@donotreply.yourdomain.org"
-
-    # Email Recipients
-    # Comma delimited string of email addresses
-    toEmail = "securitydude@yourdomain.org"
-
-    # Possible types: ips-event, malware-callback, malware-object, infection-match, domain-match, web-infection
-    emailTypeAlertOn = ['ips-event', 'malware-callback', 'malware-object', 'infection-match', 'domain-match', 'web-infection']
-
-    # SMS Recipients
-    # Comma delimted string. Format depends on carrier. You'll have to look it up.
-    toSMS = "aphonenumber@vtext.com"
-
-    # Possible types: ips-event, malware-callback, malware-object, infection-match, domain-match, web-infection
-    smsTypeAlertOn = ['malware-callback', 'malware-object', 'infection-match', 'domain-match', 'web-infection']
-
-    # Possible actions: blocked, notified, alert.
-    # Make this an empty array [] to not alert on anything.
-    smsActionAlertOn = ['notified', 'alert']
-
-    # Local timezone for conversion (@timestamp is UTC) - see pytz.all_timezones
-    # http://stackoverflow.com/questions/13866926/python-pytz-list-of-timezones
-    # Common US TZ: US/Central US/Eastern US/Mountain US/Pacific - see link above for more
-    myTimezone = 'US/Eastern'
-
-    # --------- Config End ---------------------------------------------------
-    # ------------------------------------------------------------------------
-    # ------------------------------------------------------------------------
+def sendAlert(theJson, fsconfig):
 
     # Prepare alert data to include in email
-    emailData = gatherEmailData(theJson, myTimezone)
+    emailData = gatherEmailData(theJson, fsconfig.myTimezone)
 
     # Build html version of message
     htmlEmail = buildHTMLMessage(emailData)
@@ -65,31 +27,31 @@ def sendAlert(theJson):
     # ---------------------------------------
 
     # Send SMS
-    if (emailData['alertname'] in smsTypeAlertOn) and (emailData['action'] in smsActionAlertOn):
+    if (emailData['alertname'] in fsconfig.smsTypeAlertOn) and (emailData['action'] in fsconfig.smsActionAlertOn):
         txtMessages = splitForSMS(textEmail, emailData['alertid'])
         for txtMessage in txtMessages:
             msg = MIMEMultipart('alternative')
-            msg['From'] = fromEmail
-            msg['To'] = toSMS
+            msg['From'] = fsconfig.fromEmail
+            msg['To'] = fsconfig.toSMS
             msg.attach(MIMEText(txtMessage, 'plain'))
-            s = smtplib.SMTP(smtpServer, smtpPort)
-            s.sendmail(fromEmail, toSMS, msg.as_string())
+            s = smtplib.SMTP(fsconfig.smtpServer, fsconfig.smtpPort)
+            s.sendmail(fsconfig.fromEmail, fsconfig.toSMS, msg.as_string())
             s.quit()
 
     # ---------------------------------------
 
     # Send email
-    if emailData['alertname'] in emailTypeAlertOn:
+    if emailData['alertname'] in fsconfig.emailTypeAlertOn:
         msg = MIMEMultipart('alternative')
         msg['Subject'] = subjectLine
-        msg['From'] = fromEmail
-        msg['To'] = toEmail
+        msg['From'] = fsconfig.fromEmail
+        msg['To'] = fsconfig.toEmail
         part1 = MIMEText(textEmail, 'plain')
         part2 = MIMEText(htmlEmail, 'html')
         msg.attach(part1)
         msg.attach(part2)
-        s = smtplib.SMTP(smtpServer, smtpPort)
-        s.sendmail(fromEmail, toEmail, msg.as_string())
+        s = smtplib.SMTP(fsconfig.smtpServer, fsconfig.smtpPort)
+        s.sendmail(fsconfig.fromEmail, fsconfig.toEmail, msg.as_string())
         s.quit()
 
     # ---------------------------------------
