@@ -10,6 +10,7 @@ import json
 from datetime import datetime
 import pytz  		# pip install pytz
 
+
 def sendAlert(theJson, fsconfig):
 
     # Prepare alert data to include in email

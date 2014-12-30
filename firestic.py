@@ -14,6 +14,7 @@ import socket
 import firestic_alert
 import fsconfig
 
+
 class MyRequestHandler (BaseHTTPRequestHandler):
 
     # ---------- GET handler to check if httpserver up ----------
@@ -100,7 +101,7 @@ def processAlert(theJson):
     # ---------- send email alerts ----------
     if fsconfig.sendAlerts is True:
         try:
-            firestic_alert.sendAlert(theJson,fsconfig)
+            firestic_alert.sendAlert(theJson, fsconfig)
         except:
             logging.exception("\n-----------\nEMAIL ERROR\n--------- JSON: %s \n----------\nTIME: %s\n", json.dumps(theJson), datetime.utcnow())
 
