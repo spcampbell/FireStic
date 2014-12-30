@@ -164,7 +164,9 @@ The script accomodates different database files for internal vs. external device
 
 #### Script Configuration
 
-Both firestic.py and firestic\_alert.py have configurations that need to be dealt with before running the script. These are located at the beginning of each script file (firestic.py and firestic_alert.py)
+~~Both firestic.py and firestic\_alert.py have configurations that need to be dealt with before running the script. These are located at the beginning of each script file (firestic.py and firestic_alert.py)~~
+
+UPDATE: All configuration options are now located in `fsconfig.py`. Please configure the settings below in that file.
 
 ####firestic.py Configuration Settings:
 
@@ -234,11 +236,13 @@ To get you up and running quickly, a dashboard template for Kibana is available 
 
 #### TODO
 
+* Move documentation to RTFD
 * Code to deal with os-changes data and index into Elasticsearch. Need to determine best relationship strategy (in code vs. nesting vs. parent-child)
 * Set up alerting config so type vs action is configurable for each possibility
 * Better logging with comprehensive exception handling to logs
-* Put config items in standalone file
+* ~~Put config items in standalone file.~~ *Done*.
 * Daemonize
+* Easy install via PyPI
 * Add option to use SSL
 * Add multi-thread capability (or refactor for use with NGINX/Apache)
 * Examine possibility of gathering IOCs from os-changes. Would put in STIX or openIOC format. Maybe hand off for scans.
