@@ -15,7 +15,7 @@ import firestic_alert
 import fsconfig
 
 
-class MyRequestHandler (BaseHTTPRequestHandler):
+class MyRequestHandler(BaseHTTPRequestHandler):
 
     # ---------- GET handler to check if httpserver up ----------
     def do_GET(self):
@@ -39,7 +39,7 @@ class MyRequestHandler (BaseHTTPRequestHandler):
         # deal with multiple alerts embedded as an array
         if isinstance(theJson['alert'], list):
             alertJson = theJson
-            del alertjson['alert']
+            del alertJson['alert']
             for element in theJson['alert']:
                 alertJson['alert'] = element
                 processAlert(alertJson)
@@ -65,7 +65,7 @@ def processAlert(theJson):
     theJson['alert']['dst']['geoip'] = geoInfo['dst']
 
     # ---------- add @timestamp ----------
-    # use alert.occurred for timestamp. It is different for IPS vs other alerts...
+    # use alert.occurred for timestamp. It is different for IPS vs other alerts
     # ips-event alert.occurred format: 2014-12-11T03:28:08Z
     # all other alert.occurred format: 2014-12-11 03:28:33+00
     if theJson['alert']['name'] == 'ips-event':
@@ -83,27 +83,37 @@ def processAlert(theJson):
     # TODO: figure out a way to incorporate this info.
     # Doing this is complicated. Will require creative
     # Elasticsearch mapping (template?). Need to gather more json examples.
-    if ('os-changes' in theJson['alert']['explanation']):
+    if 'os-changes' in theJson['alert']['explanation']:
         # DEV: save the os-changes field to file for later review
         with open('oschanges.json', 'a') as outfile:
-            fileData = 'TIMESTAMP: ' + theJson['@timestamp'] + ' - ' + theJson['alert']['name'] + ' - ' + theJson['alert']['id'] + '\n'
-            fileData = fileData + json.dumps(theJson['alert']['explanation']['os-changes']) + '\n--------------------\n\n'
+            fileData = 'TIMESTAMP: ' + theJson['@timestamp'] + ' - '
+            fileData += theJson['alert']['name'] + ' - '
+            fileData += theJson['alert']['id'] + '\n'
+            fileData += json.dumps(theJson['alert']['explanation']['os-changes'])
+            fileData += '\n--------------------\n\n'
             outfile.write(fileData)
         del theJson['alert']['explanation']['os-changes']
-        print("[os-changes] deleted")
+        print "[os-changes] deleted"
 
-    # ---------- write to Elasticsearch ----------
+    # ---------- Index data into Elasticsearch ----------
     try:
-        res = es.index(index=esIndexStamped, doc_type=theJson['alert']['name'], body=theJson)
+        es.index(index=esIndexStamped,
+                 doc_type=theJson['alert']['name'], body=theJson)
     except:
-        logging.exception("\n-------------------------------------\nES POST ERROR\nJSON SENT: %s \n-------------------------------------\nTIME: %s\n", json.dumps(theJson), datetime.utcnow())
+        logText = "\n-----------\nES POST ERROR\n-----------\nJSON: "
+        logText += json.dumps(theJson) + "\n"
+        logText += "TIME: " + datetime.utcnow() + "\n"
+        logging.exception(logText)
 
     # ---------- send email alerts ----------
     if fsconfig.sendAlerts is True:
         try:
             firestic_alert.sendAlert(theJson, fsconfig)
         except:
-            logging.exception("\n-----------\nEMAIL ERROR\n--------- JSON: %s \n----------\nTIME: %s\n", json.dumps(theJson), datetime.utcnow())
+            logText = "\n-----------\nEMAIL ERROR\n-----------\nJSON: "
+            logText += json.dumps(theJson) + "\n"
+            logText += "TIME: " + datetime.utcnow() + "\n"
+            logging.exception(logText)
 
 
 def queryGeoip(alertInfo):
@@ -158,7 +168,9 @@ def getGeoipRecord(ipAddress, database, queryType):  # queryType = asn or city
 
 
 def main():
-    server = HTTPServer((fsconfig.httpServerIP, fsconfig.httpServerPort), MyRequestHandler)
+    server = HTTPServer((fsconfig.httpServerIP,
+                         fsconfig.httpServerPort),
+                        MyRequestHandler)
     print "\nStarting HTTP server...\n"
     try:
         server.serve_forever()
@@ -168,5 +180,7 @@ def main():
 
 if __name__ == "__main__":
     es = Elasticsearch()
-    logging.basicConfig(level=logging.WARNING, filename=fsconfig.logFile, format='%(asctime)s - %(levelname)s - %(message)s')
+    logging.basicConfig(level=logging.WARNING,
+                        filename=fsconfig.logFile,
+                        format='%(asctime)s - %(levelname)s - %(message)s')
     main()

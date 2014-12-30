@@ -6,7 +6,6 @@
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-import json
 from datetime import datetime
 import pytz  		# pip install pytz
 
@@ -23,21 +22,23 @@ def sendAlert(theJson, fsconfig):
     textEmail = buildTextMessage(emailData)
 
     # Email subject
-    subjectLine = "FireStic Alert - " + emailData['alertname'] + " - " + emailData['alertid'] + " - " + emailData['action']
+    subjectLine = "FireStic Alert - " + emailData['alertname'] + " - "
+    subjectLine += emailData['alertid'] + " - " + emailData['action']
 
     # ---------------------------------------
 
     # Send SMS
-    if (emailData['alertname'] in fsconfig.smsTypeAlertOn) and (emailData['action'] in fsconfig.smsActionAlertOn):
-        txtMessages = splitForSMS(textEmail, emailData['alertid'])
-        for txtMessage in txtMessages:
-            msg = MIMEMultipart('alternative')
-            msg['From'] = fsconfig.fromEmail
-            msg['To'] = fsconfig.toSMS
-            msg.attach(MIMEText(txtMessage, 'plain'))
-            s = smtplib.SMTP(fsconfig.smtpServer, fsconfig.smtpPort)
-            s.sendmail(fsconfig.fromEmail, fsconfig.toSMS, msg.as_string())
-            s.quit()
+    if emailData['alertname'] in fsconfig.smsTypeAlertOn:
+        if emailData['action'] in fsconfig.smsActionAlertOn:
+            txtMessages = splitForSMS(textEmail, emailData['alertid'])
+            for txtMessage in txtMessages:
+                msg = MIMEMultipart('alternative')
+                msg['From'] = fsconfig.fromEmail
+                msg['To'] = fsconfig.toSMS
+                msg.attach(MIMEText(txtMessage, 'plain'))
+                s = smtplib.SMTP(fsconfig.smtpServer, fsconfig.smtpPort)
+                s.sendmail(fsconfig.fromEmail, fsconfig.toSMS, msg.as_string())
+                s.quit()
 
     # ---------------------------------------
 
@@ -118,12 +119,20 @@ def buildHTMLMessage(emailData):
 def buildTextMessage(emailData):
     # text version of message (also used for SMS)
     textEmail = u'ID: ' + emailData['alertid'] + u'\n'
-    textEmail += u'Type: ' + emailData['alertname'] + u'\nAction: ' + emailData['action'] + u'\n'
-    textEmail += u'Severity: ' + emailData['severity'] + u'\nThreat: ' + emailData['threatname'] + u'\n'
-    textEmail += u'Source: ' + emailData['sourceip'] + u'\n' + emailData['sourcecity'] + u',' + emailData['sourceregion'] + u'\n'
-    textEmail += emailData['sourcecountry'] + u'\n' + emailData['sourceasn'] + u'\n'
-    textEmail += u'Destination: ' + emailData['destinationip'] + u'\n' + emailData['destinationcity'] + u',' + emailData['destinationregion'] + u'\n'
-    textEmail += emailData['destinationcountry'] + u'\n' + emailData['destinationasn']
+    textEmail += u'Type: ' + emailData['alertname'] + u'\n'
+    textEmail += u'Action: ' + emailData['action'] + u'\n'
+    textEmail += u'Severity: ' + emailData['severity'] + u'\n'
+    textEmail += u'Threat: ' + emailData['threatname'] + u'\n'
+    textEmail += u'Source: ' + emailData['sourceip'] + u'\n'
+    textEmail += emailData['sourcecity'] + u','
+    textEmail += emailData['sourceregion'] + u'\n'
+    textEmail += emailData['sourcecountry'] + u'\n'
+    textEmail += emailData['sourceasn'] + u'\n'
+    textEmail += u'Destination: ' + emailData['destinationip'] + u'\n'
+    textEmail += emailData['destinationcity'] + u','
+    textEmail += emailData['destinationregion'] + u'\n'
+    textEmail += emailData['destinationcountry'] + u'\n'
+    textEmail += emailData['destinationasn']
 
     return textEmail
 
@@ -132,32 +141,32 @@ def encode_for_html(unicode_data, encoding='ascii'):
     try:
         return unicode_data.encode(encoding, 'xmlcharrefreplace')
     except:
-        print("encode_for_html failed for: ")
-        print(unicode_data)
+        print "encode_for_html failed for: "
+        print unicode_data
         return " "
 
 
 def splitForSMS(fullText, alertID):
-        texts = []
-        words = fullText.split(' ')
-        curtext = ''
-        for word in words:
-            # for the first word, drop the space
-            if len(curtext) == 0:
-                curtext += word
+    texts = []
+    words = fullText.split(' ')
+    curtext = ''
+    for word in words:
+        # for the first word, drop the space
+        if len(curtext) == 0:
+            curtext += word
 
-            # check if there's enough space left in the current message
-            elif len(curtext) <= 155 - (len(word) + 1):
-                curtext += ' ' + word
+        # check if there's enough space left in the current message
+        elif len(curtext) <= 155 - (len(word) + 1):
+            curtext += ' ' + word
 
-            # not enough space. make a new message
-            else:
-                texts.append(curtext)
-                curtext = '(' + alertID + '...) ' + word
-        if curtext != '':
+        # not enough space. make a new message
+        else:
             texts.append(curtext)
+            curtext = '(' + alertID + '...) ' + word
+    if curtext != '':
+        texts.append(curtext)
 
-        return texts
+    return texts
 
 
 def gatherEmailData(alertData, myTimezone):
