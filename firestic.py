@@ -12,40 +12,10 @@ import logging
 import pygeoip  	 # pip install pygeoip
 import socket
 import firestic_alert
-
-# ---------------------------------------------
-# config --> TODO: move this to another file
-
-# Elasticsearch index to use - YYYY.MM.DD will be appended
-esIndex = 'firestic'
-
-# Geoip database for external (internet) addresses
-extGeoipDatabase = 'geoip/GeoLiteCity.dat'
-
-# Geoip database for internal (LAN) addresses (see README)
-intGeoipDatabase = 'geoip/GeoLiteCity.dat'
-
-# Geoip database for external address ASN info
-ASNGeoipDatabase = 'geoip/GeoIPASNum.dat'
-
-# ASN for internal addresses
-localASN = 'your_org_name'
-
-# IP for http server to listen on
-httpServerIP = 'ipa.dd.re.ss'
-
-# Port for http server to listen on
-httpServerPort = 8888
-
-# File for logging errors
-logFile = 'firestic_error.log'
-
-# Send email/SMS alerts - see firestic_alert.py
-sendAlerts = True
-# ---------------------------------------------
+import fsconfig
 
 
-class MyRequestHandler (BaseHTTPRequestHandler):
+class MyRequestHandler(BaseHTTPRequestHandler):
 
     # ---------- GET handler to check if httpserver up ----------
     def do_GET(self):
@@ -69,7 +39,7 @@ class MyRequestHandler (BaseHTTPRequestHandler):
         # deal with multiple alerts embedded as an array
         if isinstance(theJson['alert'], list):
             alertJson = theJson
-            del alertjson['alert']
+            del alertJson['alert']
             for element in theJson['alert']:
                 alertJson['alert'] = element
                 processAlert(alertJson)
@@ -95,7 +65,7 @@ def processAlert(theJson):
     theJson['alert']['dst']['geoip'] = geoInfo['dst']
 
     # ---------- add @timestamp ----------
-    # use alert.occurred for timestamp. It is different for IPS vs other alerts...
+    # use alert.occurred for timestamp. It is different for IPS vs other alerts
     # ips-event alert.occurred format: 2014-12-11T03:28:08Z
     # all other alert.occurred format: 2014-12-11 03:28:33+00
     if theJson['alert']['name'] == 'ips-event':
@@ -105,7 +75,7 @@ def processAlert(theJson):
 
     oc = datetime.strptime(theJson['alert']['occurred'], timeFormat)
     # Append YYYY.MM.DD to indexname like Logstash
-    esIndexStamped = esIndex + oc.strftime('-%Y.%m.%d')
+    esIndexStamped = fsconfig.esIndex + oc.strftime('-%Y.%m.%d')
     # Put the formatted time into @timestamp
     theJson['@timestamp'] = oc.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
 
@@ -113,27 +83,37 @@ def processAlert(theJson):
     # TODO: figure out a way to incorporate this info.
     # Doing this is complicated. Will require creative
     # Elasticsearch mapping (template?). Need to gather more json examples.
-    if ('os-changes' in theJson['alert']['explanation']):
+    if 'os-changes' in theJson['alert']['explanation']:
         # DEV: save the os-changes field to file for later review
         with open('oschanges.json', 'a') as outfile:
-            fileData = 'TIMESTAMP: ' + theJson['@timestamp'] + ' - ' + theJson['alert']['name'] + ' - ' + theJson['alert']['id'] + '\n'
-            fileData = fileData + json.dumps(theJson['alert']['explanation']['os-changes']) + '\n--------------------\n\n'
+            fileData = 'TIMESTAMP: ' + theJson['@timestamp'] + ' - '
+            fileData += theJson['alert']['name'] + ' - '
+            fileData += theJson['alert']['id'] + '\n'
+            fileData += json.dumps(theJson['alert']['explanation']['os-changes'])
+            fileData += '\n--------------------\n\n'
             outfile.write(fileData)
         del theJson['alert']['explanation']['os-changes']
-        print("[os-changes] deleted")
+        print "[os-changes] deleted"
 
-    # ---------- write to Elasticsearch ----------
+    # ---------- Index data into Elasticsearch ----------
     try:
-        res = es.index(index=esIndexStamped, doc_type=theJson['alert']['name'], body=theJson)
+        es.index(index=esIndexStamped,
+                 doc_type=theJson['alert']['name'], body=theJson)
     except:
-        logging.exception("\n-------------------------------------\nES POST ERROR\nJSON SENT: %s \n-------------------------------------\nTIME: %s\n", json.dumps(theJson), datetime.utcnow())
+        logText = "\n-----------\nES POST ERROR\n-----------\nJSON: "
+        logText += json.dumps(theJson) + "\n"
+        logText += "TIME: " + datetime.utcnow() + "\n"
+        logging.exception(logText)
 
     # ---------- send email alerts ----------
-    if sendAlerts is True:
+    if fsconfig.sendAlerts is True:
         try:
-            firestic_alert.sendAlert(theJson)
+            firestic_alert.sendAlert(theJson, fsconfig)
         except:
-            logging.exception("\n-----------\nEMAIL ERROR\n--------- JSON: %s \n----------\nTIME: %s\n", json.dumps(theJson), datetime.utcnow())
+            logText = "\n-----------\nEMAIL ERROR\n-----------\nJSON: "
+            logText += json.dumps(theJson) + "\n"
+            logText += "TIME: " + datetime.utcnow() + "\n"
+            logging.exception(logText)
 
 
 def queryGeoip(alertInfo):
@@ -141,23 +121,23 @@ def queryGeoip(alertInfo):
 
     if (alertInfo['type'] == 'ips-event') and (alertInfo['mode'] == 'server'):
         # ips-event mode is server so src = external, dest = internal
-        geoipInfo['dst'] = getGeoipRecord(alertInfo['dstIp'], intGeoipDatabase, 'city')
+        geoipInfo['dst'] = getGeoipRecord(alertInfo['dstIp'], fsconfig.intGeoipDatabase, 'city')
         if geoipInfo['dst'] is not None:
-            geoipInfo['dst']['asn'] = localASN
+            geoipInfo['dst']['asn'] = fsconfig.localASN
             geoipInfo['dst']['hostname'] = getHostname(alertInfo['dstIp'])
-        geoipInfo['src'] = getGeoipRecord(alertInfo['srcIp'], extGeoipDatabase, 'city')
+        geoipInfo['src'] = getGeoipRecord(alertInfo['srcIp'], fsconfig.extGeoipDatabase, 'city')
         if geoipInfo['src'] is not None:
-            geoipInfo['src']['asn'] = getGeoipRecord(alertInfo['srcIp'], ASNGeoipDatabase, 'asn')
+            geoipInfo['src']['asn'] = getGeoipRecord(alertInfo['srcIp'], fsconfig.ASNGeoipDatabase, 'asn')
             geoipInfo['src']['hostname'] = getHostname(alertInfo['srcIp'])
     else:
         # treat all others as src = internal, dest = external
-        geoipInfo['dst'] = getGeoipRecord(alertInfo['dstIp'], extGeoipDatabase, 'city')
+        geoipInfo['dst'] = getGeoipRecord(alertInfo['dstIp'], fsconfig.extGeoipDatabase, 'city')
         if geoipInfo['dst'] is not None:
-            geoipInfo['dst']['asn'] = getGeoipRecord(alertInfo['dstIp'], ASNGeoipDatabase, 'asn')
+            geoipInfo['dst']['asn'] = getGeoipRecord(alertInfo['dstIp'], fsconfig.ASNGeoipDatabase, 'asn')
             geoipInfo['dst']['hostname'] = getHostname(alertInfo['dstIp'])
-        geoipInfo['src'] = getGeoipRecord(alertInfo['srcIp'], intGeoipDatabase, 'city')
+        geoipInfo['src'] = getGeoipRecord(alertInfo['srcIp'], fsconfig.intGeoipDatabase, 'city')
         if geoipInfo['src'] is not None:
-            geoipInfo['src']['asn'] = localASN
+            geoipInfo['src']['asn'] = fsconfig.localASN
             geoipInfo['src']['hostname'] = getHostname(alertInfo['srcIp'])
 
     # add long,lat coordinate field...Kibana needs a field [long,lat] for "bettermap"
@@ -188,7 +168,9 @@ def getGeoipRecord(ipAddress, database, queryType):  # queryType = asn or city
 
 
 def main():
-    server = HTTPServer((httpServerIP, httpServerPort), MyRequestHandler)
+    server = HTTPServer((fsconfig.httpServerIP,
+                         fsconfig.httpServerPort),
+                        MyRequestHandler)
     print "\nStarting HTTP server...\n"
     try:
         server.serve_forever()
@@ -198,5 +180,7 @@ def main():
 
 if __name__ == "__main__":
     es = Elasticsearch()
-    logging.basicConfig(level=logging.WARNING, filename=logFile, format='%(asctime)s - %(levelname)s - %(message)s')
+    logging.basicConfig(level=logging.WARNING,
+                        filename=fsconfig.logFile,
+                        format='%(asctime)s - %(levelname)s - %(message)s')
     main()
