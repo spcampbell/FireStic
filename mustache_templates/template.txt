@@ -1,0 +1,13 @@
+ID: {{ alertid }}
+Type: {{ alertname }}
+Action: {{ action }}
+Severity: {{ severity }}
+Threat: {{ threatname }}
+Source: {{ sourceip }}
+{{ sourcecity }}, {{ sourceregion }}
+{{ sourcecountry }}
+{{ sourceasn }}
+Destination: {{ destinationip }}
+{{ destinationcity}}, {{ destinationregion }}
+{{ destinationcountry }}
+{{ destinationasn }}
