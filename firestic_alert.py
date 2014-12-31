@@ -8,7 +8,8 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from datetime import datetime
 import pytz  		# pip install pytz
-
+from premailer import transform  # pip install premailer
+import pystache
 
 def sendAlert(theJson, fsconfig):
 
@@ -60,79 +61,28 @@ def sendAlert(theJson, fsconfig):
 
 
 def buildHTMLMessage(emailData):
-    # HTML version of message
-    htmlEmail = u"""\
-    <html><head><style>
-    #outertable table, th, td {
-        border: 1px solid #85CEFF;
-        border-collapse: collapse;
-        padding: 8px;
-        text-align: left;   }
-    #inntertable table, th, td {
-        border: 0px solid black;
-        border-collapse: collapse;
-        padding: 6px;
-        text-align: left;
-        font-size: .9em;    }
-    .highlight {
-        background-color: #85CEFF;
-        font-weight: bold;  	}
-    .action {
-        padding: 4px;
-        background-color: orange;
-        font-weight:bold;	}
-    body {
-        font-family: Verdana, Arial;
-        font-size: 100%;    }
-    </style></head><body>
-    <table id="outertable">
-        <tr><td><table id="innertable">
-            <tr class="highlight"><td>""" + emailData['alertname'] + u" - " + emailData['alertid'] + u"""</td></tr>
-            <tr><td>""" + emailData['timestamp'] + u"""</td></tr>
-            <tr><td>Action: <span class="action">""" + emailData['action'] + u"""</span></td></tr>
-            <tr><td>Threat Name: """ + emailData['threatname'] + u"""</td></tr>
-            <tr><td>Threat Info: """ + emailData['threatinfo'] + u"""</td></tr>
-            <tr><td>Severity: """ + emailData['severity'] + u"""</td></tr>
-            <tr><td><a href=\"""" + emailData['alerturl'] + u"""\">FireEye Alert Link</a></td></tr>
-        </table></td></tr>
-        <tr><td><table id="innertable">
-            <tr class="highlight"><td>Source</td></tr>
-            <tr><td>""" + emailData['sourceip'] + u"""</td></tr>
-            <tr><td>Hostname: """ + emailData['sourcehostname'] + u"""</td></tr>
-            <tr><td>""" + emailData['sourcecity'] + u", " + emailData['sourceregion'] + u"""</td></tr>
-            <tr><td>""" + emailData['sourcecountry'] + u"""</td></tr>
-            <tr><td>ASN: """ + emailData['sourceasn'] + u"""</td></tr>
-        </table></td></tr>
-        <tr><td><table id="innertable">
-            <tr class="highlight"><td>Destination</td></tr>
-            <tr><td>""" + emailData['destinationip'] + u"""</td></tr>
-            <tr><td>Hostname: """ + emailData['destinationhostname'] + u"""</td></tr>
-            <tr><td>""" + emailData['destinationcity'] + u", " + emailData['destinationregion'] + u"""</td></tr>
-            <tr><td>""" + emailData['destinationcountry'] + u"""</td></tr>
-            <tr><td>ASN: """ + emailData['destinationasn'] + u"""</td></tr>
-        </table></td></tr>
-    </table></body></html>"""
+    # load HTML email template from file
+    tf = open('mustache_templates/template.html', 'r')
+    htmlTemplate = tf.read()
+    tf.close()
 
-    return encode_for_html(htmlEmail)
+    # render html message from mustache template
+    htmlEmail = pystache.render(htmlTemplate, emailData)
+    htmlEmail = encode_for_html(htmlEmail)
+    # the following uses premailer to move css inline
+    htmlEmail = transform(htmlEmail)
+
+    return htmlEmail
 
 
 def buildTextMessage(emailData):
-    # text version of message (also used for SMS)
-    textEmail = u'ID: ' + emailData['alertid'] + u'\n'
-    textEmail += u'Type: ' + emailData['alertname'] + u'\n'
-    textEmail += u'Action: ' + emailData['action'] + u'\n'
-    textEmail += u'Severity: ' + emailData['severity'] + u'\n'
-    textEmail += u'Threat: ' + emailData['threatname'] + u'\n'
-    textEmail += u'Source: ' + emailData['sourceip'] + u'\n'
-    textEmail += emailData['sourcecity'] + u','
-    textEmail += emailData['sourceregion'] + u'\n'
-    textEmail += emailData['sourcecountry'] + u'\n'
-    textEmail += emailData['sourceasn'] + u'\n'
-    textEmail += u'Destination: ' + emailData['destinationip'] + u'\n'
-    textEmail += emailData['destinationcity'] + u','
-    textEmail += emailData['destinationregion'] + u'\n'
-    textEmail += emailData['destinationcountry'] + u'\n'
-    textEmail += emailData['destinationasn']
+    # load text message template from file
+    tf = open('mustache_templates/template.txt', 'r')
+    textTemplate = tf.read()
+    tf.close()
+
+    # render text message
+    textEmail = pystache.render(textTemplate, emailData)
 
     return textEmail
 
@@ -170,14 +120,14 @@ def splitForSMS(fullText, alertID):
 
 
 def gatherEmailData(alertData, myTimezone):
+    # TODO: refactor now that using mustache for template.
+    # TODO: use get()
+
     # The process of gathering our data from the json sent over by FireEye is
-    # complicated by the various permutations of how that data is presented,
-    # plus the common situation where there is less data in some than in others.
-    # It is likely that some of the following checks (especially the setdefault calls)
-    # are redundant or unnecessary. However, without a definitive answer on what
-    # all of the possibilities are, the code tries to cover the worst case scenario,
-    # which may not ever happen. There is also a possibility that a variation will
-    # cause an exception.
+    # complicated by the various permutations of how that data is presented.
+    # It is likely that some of the following checks are redundant or
+    # unnecessary. However, without a definitive answer on what all of the
+    # possibilities are, the code tries to cover the worst case scenario.
 
     severityLevels = {u'crit': u'Critical', u'majr': u'Major', u'minr': u'Minor'}
     emptyValue = u'N/A'
