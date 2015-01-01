@@ -190,7 +190,7 @@ UPDATE: All configuration options are now located in `fsconfig.py`. Please confi
 |----------|------------|-------------|
 |esIndex|`'firestic'`|Elasticsearch index to use. `-YYYY.MM.DD` will be appended ala Logstash|
 |extGeoipDatabase|`'geoip/GeoLiteCity.dat'`|Geoip database for external (internet) addresses|
-|intGeoipDatabase|`'geoip/YourLocations.dat'`|Geoip database for internal (LAN) addresses. You'll have to create this one. See the [Geoip Setup section above](#geoip-setup)|
+|intGeoipDatabase|`'geoip/YourLocations.dat'`|Geoip database for internal (LAN) addresses. If you want to map these ip addresses to geo coordinates, you'll have to create the file. See the [Geoip Setup section above](#geoip-setup). You can use the same file as `extGeoipDatabase` but it will not resolve internal addresses|
 |ASNGeoipDatabase|`'geoip/GeoIPASNum.dat'`|Geoip database for external address ASN info|
 |localASN|`'your_org_name'`|ASN for internal ip addresses. Since internal addresses are private, this is used in the ASN field|
 |httpServerIP|`'192.168.1.2'`|ip address for http server to listen on|
