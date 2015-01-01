@@ -3,7 +3,7 @@
 <head>
     <style>
         #outertable table, th, td {
-            border: 1px solid #85CEFF;
+            border: 1px solid #D5EBF9;
             border-collapse: collapse;
             padding: 8px;
             text-align: left;
@@ -16,36 +16,49 @@
             font-size: .9em;
         }
         .highlight {
-            background-color: #85CEFF;
+            background-color: #D5EBF9;
             font-weight: bold;
         }
         .action {
             padding: 4px;
-            background-color: orange;
+            background-color: #00AAF3;
             font-weight: bold;
+            color: white;
+        }
+        a:link {
+            color: #125BD2;
         }
         body {
             font-family: Verdana, Arial;
             font-size: 100%;
+            color: #28221E;
         }
     </style>
 </head>
 
 <body>
     <table id="outertable">
+        <tr class="highlight">
+            <td colspan="2">{{ alertname }} - {{ alertid }}</td>
+        </tr>
         <tr>
             <td>
                 <table id="innertable">
-                    <tr class="highlight">
-                        <td>{{ alertname }} - {{ alertid }}</td>
+                    <tr>
+                        <td colspan="2">Occurred: {{ timestamp }}</td>
                     </tr>
                     <tr>
-                        <td>{{ timestamp }}</td>
+                        <td>Severity:</td>
+                        <td class="action">{{ severity }}</td>
                     </tr>
                     <tr>
-                        <td>Action: <span class="action">{{ action }}</span>
-                        </td>
+                        <td>Action:</td>
+                        <td class="action">{{ action }}</td>
                     </tr>
+                </table>
+            </td>
+            <td>
+                <table id="innertable">
                     <tr>
                         <td>Threat Name: {{ threatname }}</td>
                     </tr>
@@ -53,11 +66,7 @@
                         <td>Threat Info: {{ threatinfo }}</td>
                     </tr>
                     <tr>
-                        <td>Severity: {{ severity }}</td>
-                    </tr>
-                    <tr>
-                        <td><a href="{{ alerturl }}">FireEye Alert Link</a>
-                        </td>
+                        <td><a href="{{ alerturl }}">FireEye Alert Link</a></td>
                     </tr>
                 </table>
             </td>
@@ -85,8 +94,6 @@
                     </tr>
                 </table>
             </td>
-        </tr>
-        <tr>
             <td>
                 <table id="innertable">
                     <tr class="highlight">
