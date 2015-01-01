@@ -146,6 +146,13 @@ You will need to install the following python modules:
 
 `pip install <module name>` should get you set up.
 
+> NOTE: If [premailer](http://www.peterbe.com/plog/premailer.py) throws errors on install, it is usually due to
+> package dependencies missing in our OS related to `lxml`. For Ubuntu, try this:
+>
+> `sudo apt-get install -y libxml2-dev libxslt1-dev zlib1g-dev`
+>
+> More help here: http://stackoverflow.com/questions/5178416/pip-install-lxml-error
+
 For reference, here are the other modules:
 
 - smtplib
