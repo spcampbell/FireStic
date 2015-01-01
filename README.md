@@ -1,6 +1,6 @@
 ### **FireStic**
 
-#### A python script that accepts FireEye alerts as json over http and indexes (puts) the data into Elasticsearch...and notifies you too.
+#### A python script that accepts [FireEye](https://www.fireeye.com) alerts as json over http and indexes (puts) the data into [Elasticsearch](http://www.elasticsearch.org)...and notifies you too.
 
 >   **NOTE:** This script is still being developed and may contain numerous
 >   bugs, flaws and discrepencies. It may cause various types of damage and will
@@ -15,22 +15,22 @@
 
 **Concerning Elasticsearch:**
 
-- Put FireEye alerts into Elasticsearch
+- Put FireEye alerts into [Elasticsearch](http://www.elasticsearch.org)
 - Handles the variability of FireEye alert structure
-- Alternative to using Logstash which can get quite complex with FireEye alerts
+- Alternative to using [Logstash](http://logstash.net) which can get quite complex with FireEye alerts
 - Accepts alerts formatted in `JSON Extended` over http
-- Adds geoip information to alert using pygeoip
+- Adds geoip information to alert using [pygeoip](https://github.com/appliedsec/pygeoip)
 - Allows for different geoip databases for internal vs. external ip addresses
 - Adds hostname information by performing a DNS lookup on both source and destination ip addresses
 
-**Concering Notifications:**
+**Concerning Notifications:**
 
 - Send notifications via email and SMS
 - Notifications can be turned on/off completely, by alert type, or by FireEye action
 - Builds HTML email message allowing for an easier to read notification
 - Builds ascii text SMS message and splits it at 160 characters
-- Uses mustache for easy to build message templates
-- Automatically puts CSS inline before sending
+- Uses [mustache](http://mustache.github.io) templates (via [pystache](https://github.com/defunkt/pystache)) for designing notifications
+- Automatically puts CSS inline before sending using [premailer](http://www.peterbe.com/plog/premailer.py)
 - Notifications include additional information like hostname and location
 
 >   **NOTE:** Currently, the [os-changes] field is not included in the indexing
@@ -55,6 +55,7 @@
     - [Running the Script](#running-the-script)
     - [Send Some Test Alerts](#send-some-test-alerts)
 - [Other Stuff](#other-stuff)
+    - [Modifying Notification Templates](#modifying-notification-templates)
     - [Kibana Demo Template (optional)](#kibana-demo-template-optional)
     - [TODO](#todo)
 
@@ -65,14 +66,14 @@ Prepare Your Environment
 
 I am currently running this script under the following conditions:
 
-* Ubuntu server 14.04.1 LTS
+* [Ubuntu server 14.04.1 LTS](http://www.ubuntu.com/download/server)
 * Python 2.7.6
 * [Elasticsearch 1.4.0](http://www.elasticsearch.org)
 * [FireEye NX Series](http://www.fireeye.com) w/ optional IPS module enabled
 
 Other versions/variations have not been tested but it should relatively straightforward to work through any dependencies.
 
-For help setting up Elasticsearch, [HERE](https://www.digitalocean.com/community/tutorials/how-to-use-logstash-and-kibana-to-centralize-and-visualize-logs-on-ubuntu-14-04) is a good tutorial.
+For help setting up Elasticsearch: [here is a good tutorial](https://www.digitalocean.com/community/tutorials/how-to-use-logstash-and-kibana-to-centralize-and-visualize-logs-on-ubuntu-14-04).
 
 [elasticsearch.org](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/setup-repositories.html) also has a [helpful guide](http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/setup-repositories.html) for installing from repositories.
 
@@ -137,11 +138,11 @@ Prepare The Script and Dependencies
 
 You will need to install the following python modules:
 
-- pygeoip
-- pytz
-- elasticsearch
-- pystache
-- premailer
+- [pygeoip](https://github.com/appliedsec/pygeoip)
+- [pytz](http://pytz.sourceforge.net)
+- [elasticsearch](http://www.elasticsearch.org/guide/en/elasticsearch/client/python-api/current/)
+- [pystache](https://github.com/defunkt/pystache)
+- [premailer](http://www.peterbe.com/plog/premailer.py)
 
 `pip install <module name>` should get you set up.
 
@@ -160,9 +161,9 @@ For reference, here are the other modules:
 
 Download the free GeoLite City and GeoLite ASN databases (the binary versions) from [MaxMind](http://dev.maxmind.com/geoip/legacy/geolite/).
 
-Place the files in the geoip folder.
+Place the files in the `geoip` folder.
 
-The script accomodates different database files for internal vs. external devices. However, you will need to create a geoip database for your internal addresses and locations. Here is the best instruction I have found on how to do that: [Generate Local MaxMind Database](https://blog.vladionescu.com/geo-location-for-internal-networks/). It uses [mmutils](https://github.com/mteodoro/mmutils). The article describes adding your internal network locations and private ip addresses to the MaxMind CSV files. However, you will want to make your own CSV files with only internal networks and locations then compile them to a new .dat for the best result. The process is basically the same and fairly straightforward once you see how the two .csv files are organizing the data.
+The script accomodates different database files for internal vs. external devices. However, **you will need to create the geoip database for your internal addresses and locations**. Here is the best instruction I have found on how to do that: [Generate Local MaxMind Database](https://blog.vladionescu.com/geo-location-for-internal-networks/). It uses [mmutils](https://github.com/mteodoro/mmutils). The article describes adding your internal network locations and private ip addresses to the MaxMind CSV files. However, **you will want to make your own CSV files with only internal networks and locations then compile them to a new .dat for the best result.** The process is basically the same and fairly straightforward once you see how the two .csv files are organizing the data.
 
 >   **TIP:** Do not open the csv files you create in Microsoft Excel as it will
 >   completely wreck it out and will never compile. Use Open Office or a text
@@ -212,18 +213,19 @@ On one of your Elasticsearch nodes, run the script from the command line like th
 
 `sudo python firestic.py`
 
-See if it is running and accessible from another machine by going to the following in a browser:
+Check that it is running and accessible by going to the following in another computer's browser:
 
 `http://<ip address where script is running>:<port>/ping`
 
 for example: `http://192.168.1.2:8888/ping`
 
-Note that all posible exceptions are not being logged to file. You'll want to be able to see any exceptions that get thrown to stdout so running it from the console is preferred. Please report any issues you run across.
+At present, all exceptions are not being logged to file. You'll want to be able to see any exceptions that get thrown to stdout so running it from the console is preferred. Please report any issues you run across.
 
 I will daemonize the script later. For now, this will have to do.
 
 > **TIP:** Use [screen](http://www.gnu.org/software/screen/) to keep it running after log out.
-> Then you can ssh in from anywhere and check stdout as well as stop/start.
+> Then you can ssh in from anywhere and check stdout as well as stop/start. This is a great
+> pseudo-service type of functionality and works very well.
 
 #### Send Some Test Alerts
 
@@ -235,12 +237,20 @@ Now check Elasticsearch to make sure the alerts made it. You can look in Kibana 
 
 `curl -XGET localhost:9200/firestic*/_search?pretty`
 
+Finally, if you are using notifications, check your email and/or text messages and make sure they came through.
+
+Check for errors by looking for exceptions thrown to the screen and also in the log file (`firestic_error.log` by default).
+
 Other Stuff
 -----------
 
+#### Modifying Notification Templates
+
+*This section is a work in progress*
+
 #### Kibana Demo Template (optional)
 
-To get you up and running quickly, a dashboard template for Kibana is available in the file `firestic_kibana.json` located in the `prep_files` directory.
+To get you up and running quickly, a dashboard template for Kibana is available in the file `firestic_kibana.json` located in the `prep_files` directory. It's pretty basic and I suspect you'll want to extend this further...or step past Kibana altogether and build your own uber-cool home-grown dashboard website to present the data.
 
 #### TODO
 
