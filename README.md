@@ -13,19 +13,25 @@
 
 #### Highlights
 
+**Concerning Elasticsearch:**
+
 - Put FireEye alerts into Elasticsearch
+- Handles the variability of FireEye alert structure
 - Alternative to using Logstash which can get quite complex with FireEye alerts
 - Accepts alerts formatted in `JSON Extended` over http
+- Adds geoip information to alert using pygeoip
 - Allows for different geoip databases for internal vs. external ip addresses
-- Performs a DNS lookup on both source and destination ip addresses
+- Adds hostname information by performing a DNS lookup on both source and destination ip addresses
+
+**Concering Notifications:**
+
 - Send notifications via email and SMS
 - Notifications can be turned on/off completely, by alert type, or by FireEye action
 - Builds HTML email message allowing for an easier to read notification
 - Builds ascii text SMS message and splits it at 160 characters
+- Uses mustache for easy to build message templates
+- Automatically puts CSS inline before sending
 - Notifications include additional information like hostname and location
-- More information can be added to notifications by modifying script
-- Modify the script and to add additional processing or data before sending to Elasticsearch
-- With data in Elasticsearch, presenting or analying the data is limited only by your imagination. It's at minimum a great free alternative to Splunk.
 
 >   **NOTE:** Currently, the [os-changes] field is not included in the indexing
 >   process as it can vary quite a bit and more examples are needed before
@@ -81,7 +87,7 @@ My current test environment is two desktop machines with 4GB of RAM and i5 proce
 
 If you use Logstash to ship logs to Elasticsearch, a template is created automatically that adds an additional .raw sub field to every string field. We need to do that here too otherwise multi-word strings will be broken up and you'll hate dealing with that in Kibana.
 
-The template is located in `firestic_ES_template.sh` which you can run from a shell prompt...or, for your copy/paste convenience, here is the template and curl statement:
+The template is located in `firestic_ES_template.sh` located in the `prep_files` directory. You can run from a shell prompt...or, for your copy/paste convenience, here is the template and curl statement:
 
 ```Shell
 curl -XPUT localhost:9200/_template/firestic_1 -d '
@@ -129,11 +135,13 @@ Prepare The Script and Dependencies
 
 #### Python Module Dependencies:
 
-Most of the modules should be available without additional installation, with the exception of:
+You will need to install the following python modules:
 
 - pygeoip
 - pytz
 - elasticsearch
+- pystache
+- premailer
 
 `pip install <module name>` should get you set up.
 
@@ -232,7 +240,7 @@ Other Stuff
 
 #### Kibana Demo Template (optional)
 
-To get you up and running quickly, a dashboard template for Kibana is available in the file `firestic_kibana.json`.
+To get you up and running quickly, a dashboard template for Kibana is available in the file `firestic_kibana.json` located in the `prep_files` directory.
 
 #### TODO
 
