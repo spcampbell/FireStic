@@ -23,7 +23,7 @@ For help setting up Elasticsearch: [here is a good tutorial](https://www.digital
 
 My current test environment is two desktop machines with 4GB of RAM and i5 processors serving a two node cluster. The only change was to increase the heap memory size to 1GB.
 
-#### <a name="estemplate">Elasticsearch Template</a>
+####Elasticsearch Template
 
 If you use Logstash to ship logs to Elasticsearch, a template is created automatically that adds an additional .raw sub field to every string field. We need to do that here too otherwise multi-word strings will be broken up and you'll hate dealing with that in Kibana.
 
