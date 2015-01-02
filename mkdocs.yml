@@ -1,0 +1,10 @@
+site_name: FireStic
+pages:
+- [index.md, Home]
+- [prepenv.md, Prepare Your Environment]
+- [prepscript.md, Prepare The Script and Dependencies]
+- [start.md, Start the Show]
+- [templates.md, Modifying Notification Templates]
+- [other.md, Other Stuff]
+- [TODO.md, TODO]
+theme: readthedocs

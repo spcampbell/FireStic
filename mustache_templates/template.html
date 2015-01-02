@@ -1,0 +1,123 @@
+<html>
+
+<head>
+    <style>
+        #outertable table, th, td {
+            border: 1px solid #D5EBF9;
+            border-collapse: collapse;
+            padding: 8px;
+            text-align: left;
+        }
+        #inntertable table, th, td {
+            border: 0px solid black;
+            border-collapse: collapse;
+            padding: 6px;
+            text-align: left;
+            font-size: .9em;
+        }
+        .highlight {
+            background-color: #D5EBF9;
+            font-weight: bold;
+        }
+        .action {
+            padding: 4px;
+            background-color: #00AAF3;
+            font-weight: bold;
+            color: white;
+        }
+        a:link {
+            color: #125BD2;
+        }
+        body {
+            font-family: Verdana, Arial;
+            font-size: 100%;
+            color: #28221E;
+        }
+    </style>
+</head>
+
+<body>
+    <table id="outertable">
+        <tr class="highlight">
+            <td colspan="2">{{ alertname }} - {{ alertid }}</td>
+        </tr>
+        <tr>
+            <td>
+                <table id="innertable">
+                    <tr>
+                        <td colspan="2">Occurred: {{ timestamp }}</td>
+                    </tr>
+                    <tr>
+                        <td>Severity:</td>
+                        <td class="action">{{ severity }}</td>
+                    </tr>
+                    <tr>
+                        <td>Action:</td>
+                        <td class="action">{{ action }}</td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+                <table id="innertable">
+                    <tr>
+                        <td>Threat Name: {{ threatname }}</td>
+                    </tr>
+                    <tr>
+                        <td>Threat Info: {{ threatinfo }}</td>
+                    </tr>
+                    <tr>
+                        <td><a href="{{ alerturl }}">FireEye Alert Link</a></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table id="innertable">
+                    <tr class="highlight">
+                        <td>Source</td>
+                    </tr>
+                    <tr>
+                        <td>{{ sourceip }}</td>
+                    </tr>
+                    <tr>
+                        <td>Hostname: {{ sourcehostname }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ sourcecity }}, {{ sourceregion }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ sourcecountry }}</td>
+                    </tr>
+                    <tr>
+                        <td>ASN: {{ sourceasn }}</td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+                <table id="innertable">
+                    <tr class="highlight">
+                        <td>Destination</td>
+                    </tr>
+                    <tr>
+                        <td>{{ destinationip }}</td>
+                    </tr>
+                    <tr>
+                        <td>Hostname: {{ destinationhostname }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ destinationcity }}, {{ destinationregion }}</td>
+                    </tr>
+                    <tr>
+                        <td>{{ destinationcountry }}</td>
+                    </tr>
+                    <tr>
+                        <td>ASN: {{ destinationasn }}</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+
+</html>
