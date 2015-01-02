@@ -2,7 +2,7 @@ site_name: FireStic
 pages:
 - [index.md, Home]
 - [prepenv.md, Prepare Your Environment]
-- [prepenv.md#estemplate, Elasticsearch Template] 
+- [prepenv.md, Elasticsearch Template] 
 - [prepscript.md, Prepare The Script and Dependencies]
 - [start.md, Start the Show]
 - [templates.md, Modifying Notification Templates]
