@@ -2,7 +2,7 @@
 
 #### A python script that accepts [FireEye](https://www.fireeye.com) alerts as json over http and indexes (puts) the data into [Elasticsearch](http://www.elasticsearch.org)...and notifies you too.
 
-#### Full documentation is located at: [Read The Docs](http://firestic.readthedocs.org/en/latest/)
+#### Full documentation is located at: [Read The Docs](http://firestic.rtfd.org)
 
 >   **DISCLAIMER:** This script is still being developed and may contain numerous
 >   bugs, flaws and discrepencies. It may cause various types of damage and will
