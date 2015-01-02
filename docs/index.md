@@ -59,7 +59,7 @@
     - Kibana Template (optional)
 - [TODO](TODO)
 
-#### License
+#### License<a name="license"></a>
 
 The MIT License (MIT)
 
