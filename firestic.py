@@ -1,7 +1,7 @@
 # FireStic - Python script for indexing FireEye json alerts
 # into Elasticsearch over http...and some alerting too
 #
-# Please see: https://github.com/gnonai/firestic
+# Please see: https://github.com/spcampbell/firestic
 #
 from datetime import datetime
 from elasticsearch import Elasticsearch
