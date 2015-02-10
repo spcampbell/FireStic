@@ -143,8 +143,9 @@ def gatherEmailData(alertData, myTimezone):
 
     emailData['severity'] = alertData.setdefault('severity', emptyValue)
     if emailData['severity'] in severityLevels:
-        emailData['severity'] = severityLevels[emailData['severity']]
         emailData['severitycolor'] = severityColors[emailData['severity']]
+        emailData['severity'] = severityLevels[emailData['severity']]
+        
 
     emailData['alerturl'] = alertData.setdefault('alert-url', emptyValue)
 
