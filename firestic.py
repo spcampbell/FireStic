@@ -102,7 +102,7 @@ def processAlert(theJson):
     except:
         logText = "\n-----------\nES POST ERROR\n-----------\nJSON: "
         logText += json.dumps(theJson) + "\n"
-        logText += "TIME: " + datetime.utcnow() + "\n"
+        # logText += "TIME: " + datetime.utcnow() + "\n"
         logging.exception(logText)
 
     # ---------- send email alerts ----------
