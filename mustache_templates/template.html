@@ -25,6 +25,12 @@
             font-weight: bold;
             color: white;
         }
+        .severity {
+            padding: 4px;
+            background-color: {{ severitycolor }};
+            font-weight: bold;
+            color: white;
+        }
         a:link {
             color: #125BD2;
         }
@@ -49,7 +55,7 @@
                     </tr>
                     <tr>
                         <td>Severity:</td>
-                        <td class="action">{{ severity }}</td>
+                        <td class="severity">{{ severity }}</td>
                     </tr>
                     <tr>
                         <td>Action:</td>

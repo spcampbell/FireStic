@@ -130,6 +130,7 @@ def gatherEmailData(alertData, myTimezone):
     # possibilities are, the code tries to cover the worst case scenario.
 
     severityLevels = {u'crit': u'Critical', u'majr': u'Major', u'minr': u'Minor'}
+    severityColors = {u'crit': u'red', u'majr':u'orange', u'minr':u'yellow'}
     emptyValue = u'N/A'
     emailData = {}
 
@@ -143,6 +144,7 @@ def gatherEmailData(alertData, myTimezone):
     emailData['severity'] = alertData.setdefault('severity', emptyValue)
     if emailData['severity'] in severityLevels:
         emailData['severity'] = severityLevels[emailData['severity']]
+        emailData['severitycolor'] = severityColors[emailData['severity']]
 
     emailData['alerturl'] = alertData.setdefault('alert-url', emptyValue)
 
