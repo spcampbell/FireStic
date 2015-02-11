@@ -249,8 +249,8 @@ def gatherEmailData(alertData, myTimezone):
     #{{ /summaryinfo }}
     
     # basic information concerning malicious activity from os-changes
-    emailData['summaryinfo'] = alertData['explanation']['summaryinfo']
-
+    if (len(alertData['explanation'].setdefault('summaryinfo',[]))):
+        emailData['summaryinfo'] = alertData['explanation']['summaryinfo']
 
     return emailData
 
