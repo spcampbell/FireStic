@@ -2,13 +2,14 @@
 
 <head>
     <style>
-        #outertable table, th, td {
+        .outertable {
             border: 1px solid #D5EBF9;
             border-collapse: collapse;
             padding: 8px;
             text-align: left;
+            margin-top: 20px;
         }
-        #inntertable table, th, td {
+        .inntertable {
             border: 0px solid black;
             border-collapse: collapse;
             padding: 6px;
@@ -43,13 +44,13 @@
 </head>
 
 <body>
-    <table id="outertable">
+    <table class="outertable">
         <tr class="highlight">
             <td colspan="2">{{ alertname }} - {{ alertid }}</td>
         </tr>
         <tr>
             <td>
-                <table id="innertable">
+                <table class="innertable">
                     <tr>
                         <td colspan="2">Occurred: {{ timestamp }}</td>
                     </tr>
@@ -64,7 +65,7 @@
                 </table>
             </td>
             <td>
-                <table id="innertable">
+                <table class="innertable">
                     <tr>
                         <td>Threat Name: {{ threatname }}</td>
                     </tr>
@@ -79,7 +80,7 @@
         </tr>
         <tr>
             <td>
-                <table id="innertable">
+                <table class="innertable">
                     <tr class="highlight">
                         <td>Source</td>
                     </tr>
@@ -101,7 +102,7 @@
                 </table>
             </td>
             <td>
-                <table id="innertable">
+                <table class="innertable">
                     <tr class="highlight">
                         <td>Destination</td>
                     </tr>
@@ -124,6 +125,21 @@
             </td>
         </tr>
     </table>
+    
+    {{ #summaryinfo }}
+    <table class="outertable">
+        <tr class="highlight"><td>Operating system: {{ osinfo }}</td></tr>
+        <tr class="highlight"><td>Targeted application: {{ app-name }}</td></tr>
+        {{ #malicious-alert }}
+        <tr><td>
+            <b> {{ classtype }} </b><br>
+            {{ msg }} <br>
+            {{ display-msg }}
+        </td></tr>
+        {{ /malicious-alert }}
+    </table>
+    {{ /summaryinfo }}
+
 </body>
 
 </html>

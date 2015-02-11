@@ -230,6 +230,28 @@ def gatherEmailData(alertData, myTimezone):
         alertData['dst']['geoip']['hostname'] = emptyValue
     emailData['destinationhostname'] = alertData['dst']['geoip']['hostname']
 
+    # instance['osinfo'] --> name of OS
+    # instance['application']['app-name'] --> targeted application
+    # instance['malicious-alert'] --> list of malicious activity
+    #   example of one element in list:
+    #       'msg':'Process is registering a hook to monitor...'
+    #       'classtype':'Keylogging-Activity'
+    #       'display-msg':'High-level keyboard hook registered'
+    
+    #{{ #summaryinfo }}
+    #   {{ osinfo }}
+    #   {{ app-name }}
+    #   {{ #malicious-alert }}
+    #       {{ classtype }}
+    #       {{ msg }}
+    #       {{ display-msg }}
+    #   {{ /malicious-alert }}
+    #{{ /summaryinfo }}
+    
+    # basic information concerning malicious activity from os-changes
+    emailData['summaryinfo'] = alertData['explanation']['summaryinfo']
+
+
     return emailData
 
 

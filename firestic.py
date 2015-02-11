@@ -83,7 +83,12 @@ def processAlert(theJson):
     # TODO: figure out a way to incorporate this info.
     # Doing this is complicated. Will require creative
     # Elasticsearch mapping (template?). Need to gather more json examples.
+    # UPDATE -- For now, we will extract a few key bits of information from
+    #           os-changes: Operating system(s) targeted, application(s) targeted,
+    #           malicious activity found and listed in 'malicious-alert'.
     if 'os-changes' in theJson['alert']['explanation']:
+        # Go extract some useful data to include in alert
+        theJson['alert']['explanation']['summaryinfo'] = getSummaryInfo(theJson['alert']['explanation']['os-changes'])
         # DEV: save the os-changes field to file for later review
         with open('oschanges.json', 'a') as outfile:
             fileData = 'TIMESTAMP: ' + theJson['@timestamp'] + ' - '
@@ -148,6 +153,25 @@ def queryGeoip(alertInfo):
 
     return geoipInfo
 
+def getSummaryInfo(oschanges):
+    summaryInfo = []
+    for instance in oschanges:
+        thisInfo = {}
+        # instance['osinfo'] --> name of OS
+        # instance['application']['app-name'] --> targeted application
+        # instance['malicious-alert'] --> list of malicious activity
+        #   example of one element in list:
+        #       'msg':'Process is registering a hook to monitor...'
+        #       'classtype':'Keylogging-Activity'
+        #       'display-msg':'High-level keyboard hook registered'
+        thisInfo['osinfo'] = instance['osinfo']
+        thisInfo['app-name'] = instance['application']['app-name']
+        thisInfo['malicious-alert'] = []
+        for eachma in instance['malicious-alert']:
+            thisInfo['malicious-alert'].append(eachma)
+        summaryInfo.append(thisInfo)
+
+    return summaryInfo
 
 def getHostname(ipaddress):
     try:
