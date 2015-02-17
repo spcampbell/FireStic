@@ -165,6 +165,7 @@ def getSummaryInfo(oschanges):
                 thisInfo['malicious-alert'].append(eachma)
             summaryInfo.append(thisInfo)
     else:
+        thisInfo = {}
         thisInfo['osinfo'] = oschanges['osinfo']
         thisInfo['app-name'] = oschanges['application']['app-name']
         thisInfo['malicious-alert'] = []
