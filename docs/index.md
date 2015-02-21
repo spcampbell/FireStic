@@ -11,6 +11,11 @@
 >   and only offer this code as documentation of my humble attempt at solving a
 >   problem for my own needs.
 
+#### The latest version is always in the [master branch on github](https://github.com/spcampbell/FireStic/tree/master).
+
+See [changelog](https://github.com/spcampbell/FireStic/blob/develop/CHANGELOG.md) for changes beginning 2/20/15
+
+
 #### Highlights
 
 **Concerning Elasticsearch:**
