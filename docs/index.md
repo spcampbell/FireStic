@@ -39,6 +39,10 @@
 >   this field is a goldmine of information related to an incident. For now, if the
 >   [os-changes] field is found in the json, the entire [os-changes] tree is saved
 >   to a file called oschanges.json to use in developing the code.
+>
+>   **UPDATE:** if [os-changes] exists and includes information in [malicious-alert],
+>   then that data is now appended to the end of the email. There will be a section
+>   for each OS analyzed. This is key information for understanding what happened.
 
 #### Documentation Quick Reference
 - [Prepare Your Environment](prepenv)

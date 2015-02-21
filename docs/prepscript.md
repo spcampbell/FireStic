@@ -13,12 +13,17 @@ You will need to install the following python modules:
 
 `pip install <module name>` should get you set up.
 
+(To install pip on Ubuntu, run: `sudo apt-get install python-pip`)
+
 > NOTE: If [premailer](http://www.peterbe.com/plog/premailer.py) throws errors on install, it is usually due to
 > package dependencies missing in the OS related to `lxml`. For Ubuntu, try this:
 >
-> `sudo apt-get install -y libxml2-dev libxslt1-dev zlib1g-dev`
+> - Uninstall premailer if you tried to install and got errors: `sudo pip uninstall premailer`
+> - Install dependencies : `sudo apt-get install -y libxml2-dev libxslt1-dev zlib1g-dev python2.7-dev`
+> - Reinstall premailer: `sudo pip install premailer`
 >
 > More help here: http://stackoverflow.com/questions/5178416/pip-install-lxml-error
+>
 
 For reference, here are the other modules:
 
