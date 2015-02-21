@@ -16,7 +16,7 @@
 #### The latest version is always in `master`.
 #### Last update to master: 2/20/2015
 
-See [changelog](changelog.md) for changes beginning 2/20/15
+See [changelog](https://github.com/spcampbell/FireStic/blob/develop/CHANGELOG.md) for changes beginning 2/20/15
 
 #### Highlights
 
