@@ -14,7 +14,9 @@
 >   problem for my own needs.
 
 #### The latest version is always in `master`.
-#### Last update to master: 1/1/2015 (Happy New Year!)
+#### Last update to master: 2/20/2015
+
+See [changelog](#changelog.md) for changes beginning 2/20/15
 
 #### Highlights
 
