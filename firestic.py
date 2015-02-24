@@ -156,21 +156,23 @@ def queryGeoip(alertInfo):
 def getSummaryInfo(oschanges):
     summaryInfo = []
     if isinstance(oschanges,list):
-        for instance in oschanges:
+        for instance in oschanges:            
             thisInfo = {}
             thisInfo['osinfo'] = instance['osinfo']
             thisInfo['app-name'] = instance['application']['app-name']
             thisInfo['malicious-alert'] = []
-            for eachma in instance['malicious-alert']:
-                thisInfo['malicious-alert'].append(eachma)
+            if ('malicious-alert' in instance):
+                for eachma in instance['malicious-alert']:
+                    thisInfo['malicious-alert'].append(eachma)
             summaryInfo.append(thisInfo)
     else:
         thisInfo = {}
         thisInfo['osinfo'] = oschanges['osinfo']
         thisInfo['app-name'] = oschanges['application']['app-name']
         thisInfo['malicious-alert'] = []
-        for eachma in oschanges['malicious-alert']:
-            thisInfo['malicious-alert'].append(eachma)
+        if ('malicious-alert' in instance):
+            for eachma in oschanges['malicious-alert']:
+                thisInfo['malicious-alert'].append(eachma)
         summaryInfo.append(thisInfo)        
 
     return summaryInfo
