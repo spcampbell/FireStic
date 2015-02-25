@@ -170,7 +170,7 @@ def getSummaryInfo(oschanges):
         thisInfo['osinfo'] = oschanges['osinfo']
         thisInfo['app-name'] = oschanges['application']['app-name']
         thisInfo['malicious-alert'] = []
-        if ('malicious-alert' in instance):
+        if ('malicious-alert' in oschanges):
             for eachma in oschanges['malicious-alert']:
                 thisInfo['malicious-alert'].append(eachma)
         summaryInfo.append(thisInfo)        
