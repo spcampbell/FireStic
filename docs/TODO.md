@@ -1,8 +1,6 @@
 TODO
 ----
 
-* ~~Move documentation to RTFD~~ *Done*
-* ~~Put config items in standalone file.~~ *Done*.
 * Code to deal with os-changes data and index into Elasticsearch. Need to determine best relationship strategy (in code vs. nesting vs. parent-child)
 * Set up alerting config so type vs action is configurable for each possibility
 * Better logging with comprehensive exception handling to logs
