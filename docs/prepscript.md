@@ -52,9 +52,7 @@ The script accomodates different database files for internal vs. external device
 
 #### FireStic Script Configuration
 
-~~Both firestic.py and firestic\_alert.py have configurations that need to be dealt with before running the script. These are located at the beginning of each script file (firestic.py and firestic_alert.py)~~
-
-UPDATE: All configuration options are now located in `fsconfig.py`. Please configure the settings below in that file.
+All configuration options are now located in `fsconfig.py`. Please configure the settings below in that file.
 
 ####firestic.py Settings:
 
