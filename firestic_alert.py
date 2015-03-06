@@ -140,13 +140,13 @@ def gatherEmailData(alertData, myTimezone):
 
     emailData['alertname'] = alertData.setdefault('name', emptyValue)
     emailData['alertid'] = str(alertData['id'])
+    emailData['action'] = alertData.setdefault('action', emptyValue)
 
     emailData['severity'] = alertData.setdefault('severity', emptyValue)
     if emailData['severity'] in severityLevels:
         emailData['severitycolor'] = severityColors[emailData['severity']]
         emailData['severity'] = severityLevels[emailData['severity']]
         
-
     emailData['alerturl'] = alertData.setdefault('alert-url', emptyValue)
 
     # ips-events provide a signature name and possible a CVE-ID
@@ -161,9 +161,9 @@ def gatherEmailData(alertData, myTimezone):
         emailData['action'] = alertData.setdefault('explanation', {}).setdefault('ips-detected', {}).setdefault('action-taken', emptyValue)
     else:
         # sometimes the malware field is an array, sometimes not
+        mwNames = []
+        mwInfo = []
         if isinstance(alertData.setdefault('explanation', {}).setdefault('malware-detected', {}).setdefault('malware', {}), list):
-            mwNames = []
-            mwInfo = []
             for element in alertData['explanation']['malware-detected']['malware']:
                 # if (element.has_key('name')) and (element['name'] is not None):
                 if ('name' in element) and (element['name'] is not None):
@@ -174,20 +174,28 @@ def gatherEmailData(alertData, myTimezone):
                 # if (element.has_key('stype')) and (element['stype'] is not None):
                 if ('stype' in element) and (element['stype'] is not None):
                     mwInfo.append(element['stype'])
-
-            if len(mwNames):
-                emailData['threatname'] = ', '.join(mwNames)
-            else:
-                emailData['threatname'] = emptyValue
-            if len(mwInfo):
-                emailData['threatinfo'] = ', '.join(mwInfo)
-            else:
-                emailData['threatinfo'] = emptyValue
         else:
-            emailData['threatname'] = alertData['explanation']['malware-detected']['malware'].setdefault('name', emptyValue)
-            emailData['threatinfo'] = alertData['explanation']['malware-detected']['malware'].setdefault('stype', emptyValue)
-
-        emailData['action'] = alertData.setdefault('action', emptyValue)
+                element = alertData['explanation']['malware-detected']['malware']
+                # if (element.has_key('name')) and (element['name'] is not None):
+                if ('name' in element) and (element['name'] is not None):
+                    mwNames.append(element['name'])
+                # if (element.has_key('original')) and (element['original'] is not None):
+                if ('original' in element) and (element['original'] is not None):
+                    mwNames.append(element['original'])
+                # if (element.has_key('stype')) and (element['stype'] is not None):
+                if ('stype' in element) and (element['stype'] is not None):
+                    mwInfo.append(element['stype'])
+            #emailData['threatname'] = alertData['explanation']['malware-detected']['malware'].setdefault('name', emptyValue)
+            #emailData['threatinfo'] = alertData['explanation']['malware-detected']['malware'].setdefault('stype', emptyValue)
+            
+        if len(mwNames):
+            emailData['threatname'] = ', '.join(mwNames)
+        else:
+            emailData['threatname'] = emptyValue
+        if len(mwInfo):
+            emailData['threatinfo'] = ', '.join(mwInfo)
+        else:
+            emailData['threatinfo'] = emptyValue
 
     emailData['sourceip'] = alertData.setdefault('src', {}).setdefault('ip', emptyValue)
     emailData['destinationip'] = alertData.setdefault('dst', {}).setdefault('ip', emptyValue)
