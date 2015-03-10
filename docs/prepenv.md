@@ -7,7 +7,7 @@ I am currently running this script under the following conditions:
 
 * [Ubuntu server 14.04.1 LTS](http://www.ubuntu.com/download/server)
 * Python 2.7.6
-* [Elasticsearch 1.4.0](http://www.elasticsearch.org)
+* [Elasticsearch 1.4.x](http://www.elasticsearch.org)
 * [FireEye NX Series](http://www.fireeye.com) w/ optional IPS module enabled
 
 Other versions/variations have not been tested but it should relatively straightforward to work through any dependencies.
