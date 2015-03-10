@@ -14,7 +14,7 @@
 >   problem for my own needs.
 
 #### The latest version is always in `master`.
-#### Last update to master: 2/20/2015
+#### Last update to master: 3/9/2015
 
 See [changelog](https://github.com/spcampbell/FireStic/blob/master/CHANGELOG.md) for changes beginning 2/20/15
 
@@ -39,6 +39,13 @@ See [changelog](https://github.com/spcampbell/FireStic/blob/master/CHANGELOG.md)
 - Uses [mustache](http://mustache.github.io) templates (via [pystache](https://github.com/defunkt/pystache)) for designing notification messages
 - Automatically puts CSS inline before sending using [premailer](http://www.peterbe.com/plog/premailer.py)
 - Notifications include additional information like hostname and location
+
+#### Screenshots
+
+Current screenshots available in the `screenshots` directory:
+
+- [Malware-object HTML email alert](https://github.com/spcampbell/FireStic/blob/master/screenshots/examplealert_mal_obj.png)
+- [Malware-callback HTML email alert](https://github.com/spcampbell/FireStic/blob/master/screenshots/examplealert_mal_cb.png)
 
 #### License
 
