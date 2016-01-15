@@ -41,12 +41,15 @@ class MyRequestHandler(BaseHTTPRequestHandler):
 
         # deal with multiple alerts embedded as an array
         if isinstance(theJson['alert'], list):
-            alertJson = theJson
-            del alertJson['alert']
+#            alertJson = theJson
+#            del alertJson['alert']
             for element in theJson['alert']:
+                alertJson = {}  # added for Issue #4
                 alertJson['alert'] = element
+                print "Processing FireEye Alert: " + str(alertJson['alert']['id'])
                 processAlert(alertJson)
         else:
+            print "Processing FireEye Alert: " + str(theJson['alert']['id'])
             processAlert(theJson)
 
 # ---------------- end class MyRequestHandler ----------------
