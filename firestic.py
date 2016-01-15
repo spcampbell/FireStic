@@ -7,12 +7,15 @@ from datetime import datetime
 from elasticsearch import Elasticsearch
 from BaseHTTPServer import HTTPServer
 from BaseHTTPServer import BaseHTTPRequestHandler
+from SocketServer import ThreadingMixIn
+import threading
 import json
 import logging
 import pygeoip  	 # pip install pygeoip
 import socket
 import firestic_alert
 import fsconfig
+import socket
 
 
 class MyRequestHandler(BaseHTTPRequestHandler):
@@ -48,6 +51,13 @@ class MyRequestHandler(BaseHTTPRequestHandler):
 
 # ---------------- end class MyRequestHandler ----------------
 
+
+# ---------------- Class handles requests in a separate thread. ----------------
+
+class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
+	pass
+
+# ---------------- end class ThreadedHTTPServer ----------------
 
 def processAlert(theJson):
     # ---------- add geoip information ----------
@@ -196,9 +206,8 @@ def getGeoipRecord(ipAddress, database, queryType):  # queryType = asn or city
 
 
 def main():
-    server = HTTPServer((fsconfig.httpServerIP,
-                         fsconfig.httpServerPort),
-                        MyRequestHandler)
+    server = ThreadedHTTPServer((fsconfig.httpServerIP, fsconfig.httpServerPort), \
+									MyRequestHandler)
     print "\nStarting HTTP server...\n"
     try:
         server.serve_forever()
