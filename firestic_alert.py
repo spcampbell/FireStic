@@ -29,17 +29,21 @@ def sendAlert(theJson, fsconfig):
     # ---------------------------------------
     # !!!!!!!!! Issues creating SMS message - working on fix !!!!!!!!!
     # Send SMS
-    #if emailData['alertname'] in fsconfig.smsTypeAlertOn:
-    #    if emailData['action'] in fsconfig.smsActionAlertOn:
-    #        txtMessages = splitForSMS(textEmail, emailData['alertid'])
-    #        for txtMessage in txtMessages:
-    #            msg = MIMEMultipart('alternative')
-    #            msg['From'] = fsconfig.fromEmail
-    #            msg['To'] = fsconfig.toSMS
-    #            msg.attach(MIMEText(txtMessage, 'plain'))
-    #            s = smtplib.SMTP(fsconfig.smtpServer, fsconfig.smtpPort)
-    #            s.sendmail(fsconfig.fromEmail, fsconfig.toSMS, msg.as_string())
-    #            s.quit()
+    if emailData['alertname'] in fsconfig.smsTypeAlertOn:
+        if emailData['action'] in fsconfig.smsActionAlertOn:
+            txtMessages = splitForSMS(textEmail, emailData['alertid'])
+            for txtMessage in txtMessages:
+                msg = MIMEMultipart('alternative')
+                msg['From'] = fsconfig.fromEmail
+                msg['To'] = fsconfig.toSMS
+                msg.attach(MIMEText(txtMessage, 'plain'))
+                with open('sms.txt', 'a') as smsoutfile:
+                    smsoutfileData = msg.as_string()
+                    smsoutfileData += '\n--------------------\n\n'
+                    smsoutfile.write(smsoutfileData)
+                #s = smtplib.SMTP(fsconfig.smtpServer, fsconfig.smtpPort)
+                #s.sendmail(fsconfig.fromEmail, fsconfig.toSMS, msg.as_string())
+                #s.quit()
 
     # ---------------------------------------
 
