@@ -127,6 +127,15 @@
             </td>
         </tr>
     </table>
+ 
+    {{ #threatURLs }}
+    <table class="outertable">
+        <tr class="highlight"><td>Malicious URLs Found</td></tr>
+        {{ #urllist }}
+        <tr><td>{{ url }}</td></tr>
+        {{ /urllist }}
+    </table>
+    {{ /threatURLs }}
     
     {{ #summaryinfo }}
     <table class="outertable">

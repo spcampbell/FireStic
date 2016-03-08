@@ -163,6 +163,7 @@ def gatherEmailData(alertData, myTimezone):
         # sometimes the malware field is an array, sometimes not
         mwNames = []
         mwInfo = []
+        mwURLs = []
         if isinstance(alertData.setdefault('explanation', {}).setdefault('malware-detected', {}).setdefault('malware', {}), list):
             for element in alertData['explanation']['malware-detected']['malware']:
                 # if (element.has_key('name')) and (element['name'] is not None):
@@ -174,6 +175,10 @@ def gatherEmailData(alertData, myTimezone):
                 # if (element.has_key('stype')) and (element['stype'] is not None):
                 if ('stype' in element) and (element['stype'] is not None):
                     mwInfo.append(element['stype'])
+                if ('url' in element) and (element['url'] is not None):
+                    mwURLs.append(element['url'])
+                if ('objurl' in element) and (element['objurl'] is not None):
+                    mwURLs.append(element['objurl'])
         else:
                 element = alertData['explanation']['malware-detected']['malware']
                 # if (element.has_key('name')) and (element['name'] is not None):
@@ -185,6 +190,10 @@ def gatherEmailData(alertData, myTimezone):
                 # if (element.has_key('stype')) and (element['stype'] is not None):
                 if ('stype' in element) and (element['stype'] is not None):
                     mwInfo.append(element['stype'])
+                if ('url' in element) and (element['url'] is not None):
+                    mwURLs.append(element['url'])
+                if ('objurl' in element) and (element['objurl'] is not None):
+                    mwURLs.append(element['objurl'])
             #emailData['threatname'] = alertData['explanation']['malware-detected']['malware'].setdefault('name', emptyValue)
             #emailData['threatinfo'] = alertData['explanation']['malware-detected']['malware'].setdefault('stype', emptyValue)
             
@@ -196,7 +205,13 @@ def gatherEmailData(alertData, myTimezone):
             emailData['threatinfo'] = ', '.join(mwInfo)
         else:
             emailData['threatinfo'] = emptyValue
-
+        
+        emailData['threatURLs'] = {}
+        emailData['threatURLs']['urllist'] = []
+        for url in mwURLs:
+            thisDict = {'url':url}
+            emailData['threatURLs']['urllist'].append(thisDict)
+            
     emailData['sourceip'] = alertData.setdefault('src', {}).setdefault('ip', emptyValue)
     emailData['destinationip'] = alertData.setdefault('dst', {}).setdefault('ip', emptyValue)
 
