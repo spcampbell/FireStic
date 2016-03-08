@@ -130,17 +130,17 @@
  
     {{ #threatURLs }}
     <table class="outertable">
-        <tr class="highlight"><td>Malicious URLs Found</td></tr>
+        <tr class="highlight"><td colspan="2">Malicious URLs Found</td></tr>
         {{ #urllist }}
-        <tr><td>{{ url }}<BR></td></tr>
+        <tr><td>{{ name }}</td><td>{{ url }}</td></tr>
         {{ /urllist }}
     </table>
     {{ /threatURLs }}
     
     {{ #summaryinfo }}
     <table class="outertable">
-        <tr class="highlight"><td>Operating system: {{ osinfo }}</td></tr>
-        <tr class="highlight"><td>Targeted application: {{ app-name }}</td></tr>
+        <tr class="highlight"><td colspan="3">Operating system: {{ osinfo }}</td></tr>
+        <tr class="highlight"><td colspan="3">Targeted application: {{ app-name }}</td></tr>
         {{ #malicious-alert }}
         <tr>
             <td><b>{{ classtype }}</b></td><td>{{ msg }}</td><td>{{ display-msg }}</td>
