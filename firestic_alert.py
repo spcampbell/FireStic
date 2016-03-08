@@ -217,8 +217,9 @@ def gatherEmailData(alertData, myTimezone):
         else:
             emailData['threatinfo'] = emptyValue
         
-        emailData['threatURLs'] = {}
-        emailData['threatURLs']['urllist'] = urllist
+        emailData['threatURLs'] = []
+        if len(urllist):
+            emailData['threatURLs']['urllist'] = urllist
         #for url in mwURLs:
         #    thisDict = {'url':url}
         #    emailData['threatURLs']['urllist'].append(thisDict)
