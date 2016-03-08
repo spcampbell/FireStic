@@ -27,7 +27,6 @@ def sendAlert(theJson, fsconfig):
     subjectLine += emailData['alertid'] + " - " + emailData['action']
 
     # ---------------------------------------
-    # !!!!!!!!! Issues creating SMS message - working on fix !!!!!!!!!
     # Send SMS
     if emailData['alertname'] in fsconfig.smsTypeAlertOn:
         if emailData['action'] in fsconfig.smsActionAlertOn:
@@ -37,13 +36,9 @@ def sendAlert(theJson, fsconfig):
                 msg['From'] = fsconfig.fromEmail
                 msg['To'] = fsconfig.toSMS
                 msg.attach(MIMEText(txtMessage, 'plain'))
-                with open('sms.txt', 'a') as smsoutfile:
-                    smsoutfileData = msg.as_string()
-                    smsoutfileData += '\n--------------------\n\n'
-                    smsoutfile.write(smsoutfileData)
-                #s = smtplib.SMTP(fsconfig.smtpServer, fsconfig.smtpPort)
-                #s.sendmail(fsconfig.fromEmail, fsconfig.toSMS, msg.as_string())
-                #s.quit()
+                s = smtplib.SMTP(fsconfig.smtpServer, fsconfig.smtpPort)
+                s.sendmail(fsconfig.fromEmail, fsconfig.toSMS, msg.as_string())
+                s.quit()
 
     # ---------------------------------------
 
