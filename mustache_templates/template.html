@@ -132,7 +132,7 @@
     <table class="outertable">
         <tr class="highlight"><td>Malicious URLs Found</td></tr>
         {{ #urllist }}
-        <tr><td>{{ url }}</td></tr>
+        <tr><td>{{ url }}<BR></td></tr>
         {{ /urllist }}
     </table>
     {{ /threatURLs }}
@@ -142,11 +142,9 @@
         <tr class="highlight"><td>Operating system: {{ osinfo }}</td></tr>
         <tr class="highlight"><td>Targeted application: {{ app-name }}</td></tr>
         {{ #malicious-alert }}
-        <tr><td>
-            <b> {{ classtype }} </b><br>
-            {{ msg }} <br>
-            {{ display-msg }}
-        </td></tr>
+        <tr>
+            <td><b>{{ classtype }}</b></td><td>{{ msg }}</td><td>{{ display-msg }}</td>
+        </tr>
         {{ /malicious-alert }}
     </table>
     {{ /summaryinfo }}
