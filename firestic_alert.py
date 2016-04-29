@@ -27,7 +27,6 @@ def sendAlert(theJson, fsconfig):
     subjectLine += emailData['alertid'] + " - " + emailData['action']
 
     # ---------------------------------------
-
     # Send SMS
     if emailData['alertname'] in fsconfig.smsTypeAlertOn:
         if emailData['action'] in fsconfig.smsActionAlertOn:
@@ -163,28 +162,48 @@ def gatherEmailData(alertData, myTimezone):
         # sometimes the malware field is an array, sometimes not
         mwNames = []
         mwInfo = []
+        #mwURLs = []
+        urllist = []
         if isinstance(alertData.setdefault('explanation', {}).setdefault('malware-detected', {}).setdefault('malware', {}), list):
             for element in alertData['explanation']['malware-detected']['malware']:
+                thisURLrow = {}
                 # if (element.has_key('name')) and (element['name'] is not None):
                 if ('name' in element) and (element['name'] is not None):
                     mwNames.append(element['name'])
+                    thisURLrow['name'] = element['name']
                 # if (element.has_key('original')) and (element['original'] is not None):
                 if ('original' in element) and (element['original'] is not None):
                     mwNames.append(element['original'])
                 # if (element.has_key('stype')) and (element['stype'] is not None):
                 if ('stype' in element) and (element['stype'] is not None):
                     mwInfo.append(element['stype'])
+                if ('url' in element) and (element['url'] is not None):
+                    #mwURLs.append(element['url'])
+                    thisURLrow['url'] = element['url']
+                if ('objurl' in element) and (element['objurl'] is not None):
+                    #mwURLs.append(element['objurl'])
+                    thisURLrow['url'] = element['objurl']
+                urllist.append(thisURLrow)
         else:
                 element = alertData['explanation']['malware-detected']['malware']
+                thisURLrow = {}
                 # if (element.has_key('name')) and (element['name'] is not None):
                 if ('name' in element) and (element['name'] is not None):
                     mwNames.append(element['name'])
+                    thisURLrow['name'] = element['name']
                 # if (element.has_key('original')) and (element['original'] is not None):
                 if ('original' in element) and (element['original'] is not None):
                     mwNames.append(element['original'])
                 # if (element.has_key('stype')) and (element['stype'] is not None):
                 if ('stype' in element) and (element['stype'] is not None):
                     mwInfo.append(element['stype'])
+                if ('url' in element) and (element['url'] is not None):
+                    #mwURLs.append(element['url'])
+                    thisURLrow['url'] = element['url']
+                if ('objurl' in element) and (element['objurl'] is not None):
+                    #mwURLs.append(element['objurl'])
+                    thisURLrow['url'] = element['objurl']
+                    
             #emailData['threatname'] = alertData['explanation']['malware-detected']['malware'].setdefault('name', emptyValue)
             #emailData['threatinfo'] = alertData['explanation']['malware-detected']['malware'].setdefault('stype', emptyValue)
             
@@ -196,7 +215,16 @@ def gatherEmailData(alertData, myTimezone):
             emailData['threatinfo'] = ', '.join(mwInfo)
         else:
             emailData['threatinfo'] = emptyValue
-
+        
+        emailData['threatURLs'] = []
+        if len(urllist):
+            emailData['threatURLs'].append({'urllist':urllist})
+        #for url in mwURLs:
+        #    thisDict = {'url':url}
+        #    emailData['threatURLs']['urllist'].append(thisDict)
+        
+        
+            
     emailData['sourceip'] = alertData.setdefault('src', {}).setdefault('ip', emptyValue)
     emailData['destinationip'] = alertData.setdefault('dst', {}).setdefault('ip', emptyValue)
 

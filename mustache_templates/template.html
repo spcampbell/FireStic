@@ -20,6 +20,9 @@
             background-color: #D5EBF9;
             font-weight: bold;
         }
+        .boldonly {
+            font-weight: bold;
+        }
         .action {
             padding: 4px;
             background-color: #00AAF3;
@@ -127,18 +130,31 @@
             </td>
         </tr>
     </table>
+ 
+    {{ #threatURLs }}
+    <table class="outertable">
+        <table class="innertable">
+            <tr class="highlight"><td colspan="2">Malicious URLs Found</td></tr>
+            {{ #urllist }}
+            <tr>
+                <td class="boldonly">{{ name }}</td><td>{{ url }}</td>
+            </tr>
+            {{ /urllist }}
+        </table>
+    </table>
+    {{ /threatURLs }}
     
     {{ #summaryinfo }}
     <table class="outertable">
-        <tr class="highlight"><td>Operating system: {{ osinfo }}</td></tr>
-        <tr class="highlight"><td>Targeted application: {{ app-name }}</td></tr>
-        {{ #malicious-alert }}
-        <tr><td>
-            <b> {{ classtype }} </b><br>
-            {{ msg }} <br>
-            {{ display-msg }}
-        </td></tr>
-        {{ /malicious-alert }}
+        <table class="innertable">
+            <tr class="highlight"><td colspan="3">Operating system: {{ osinfo }}</td></tr>
+            <tr class="highlight"><td colspan="3">Targeted application: {{ app-name }}</td></tr>
+            {{ #malicious-alert }}
+            <tr>
+                <td class="boldonly">{{ classtype }}</td><td>{{ msg }}</td><td>{{ display-msg }}</td>
+            </tr>
+            {{ /malicious-alert }}
+        </table>
     </table>
     {{ /summaryinfo }}
 
