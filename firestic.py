@@ -81,11 +81,13 @@ def processAlert(theJson):
     # use alert.occurred for timestamp. It is different for IPS vs other alerts
     # ips-event alert.occurred format: 2014-12-11T03:28:08Z
     # all other alert.occurred format: 2014-12-11 03:28:33+00
-    if theJson['alert']['name'] == 'ips-event':
-        timeFormat = '%Y-%m-%dT%H:%M:%SZ'
-    else:
-        timeFormat = '%Y-%m-%d %H:%M:%S+00'
-
+    #if theJson['alert']['name'] == 'ips-event':
+    #    timeFormat = '%Y-%m-%dT%H:%M:%SZ'
+    #else:
+    #    timeFormat = '%Y-%m-%d %H:%M:%S+00'
+    # !! UPDATE 9/25/17 - time format is now same for all. Not sure exactly why. Likely a FE update.
+    timeFormat = '%Y-%m-%dT%H:%M:%SZ'
+	
     oc = datetime.strptime(theJson['alert']['occurred'], timeFormat)
     # Append YYYY.MM.DD to indexname like Logstash
     esIndexStamped = fsconfig.esIndex + oc.strftime('-%Y.%m.%d')
