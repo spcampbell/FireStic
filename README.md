@@ -14,7 +14,7 @@
 >   problem for my own needs.
 
 #### The latest version is always in `master`.
-#### Last update to master: 3/9/2015
+#### Last update to master: 9/25/2017
 
 See [changelog](https://github.com/spcampbell/FireStic/blob/master/CHANGELOG.md) for changes beginning 2/20/15
 
