@@ -2,7 +2,7 @@
 
 **Master branch is the latest release**
 
-####9/25/2015
+####9/25/2017
 - changed time format so it is same for all alerts. Fireeye may have updated code which changed this so they are all the same. Previously, IPS events were different than all other alerts. Now they all match IPS events.
 
 ####3/9/2015
