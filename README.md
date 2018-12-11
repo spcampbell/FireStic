@@ -1,3 +1,5 @@
+### **FireStic is no longer being developed. I am leaving it here for informational purposes.**
+
 ### **FireStic**
 
 #### A python script that accepts [FireEye](https://www.fireeye.com) alerts as json over http and indexes (puts) the data into [Elasticsearch](http://www.elasticsearch.org)...and notifies you too.
