@@ -1,4 +1,4 @@
-### **FireStic is no longer being developed. I am leaving it here for informational purposes.**
+## ATTENTION: FireStic is no longer being developed. I am leaving it here for informational purposes.
 
 ### **FireStic**
 
